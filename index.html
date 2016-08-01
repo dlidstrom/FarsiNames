@@ -14,18 +14,22 @@
     angular.module("app", [])
         .controller("NamesCtrl", NamesCtrl)
         .filter('startsWith', function() {
-          return function(items, prefix, itemProperty) {
+          return function(items, prefix) {
             if (!prefix) return items;
             return items.filter(function(item) {
-              var findIn = itemProperty ? item[itemProperty] : item;
-              return findIn.toString().indexOf(prefix) === 0;
+              return item.text.indexOf(prefix) === 0;
             });
           };
         });
     function NamesCtrl() {
         var ctrl = this;
 
-        this.names = girlNames;
+        this.names = girlNames.map(function (e, i) {
+            return {
+                index: i + 1,
+                text: e
+            };
+        });
     }
     </script>
     <style>
@@ -62,8 +66,10 @@
         <div class="row">
             <div class="col-xs-12">
                 <table id="names" class="table table-bordered">
-                    <tr ng-repeat="item in ctrl.names | startsWith:ctrl.namePart">
-                        <td>{{item}}</td>
+                    <tr><td colspan="2">{{filtered.length}} \ {{ctrl.names.length}}
+                    <tr ng-repeat="item in ctrl.names | startsWith:ctrl.namePart as filtered">
+                        <td>{{item.index}}</td>
+                        <td>{{item.text}}</td>
                     </tr>
                 </table>
             </div>
