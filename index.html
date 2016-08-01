@@ -21,15 +21,33 @@
             });
           };
         });
-    function NamesCtrl() {
+    function NamesCtrl($sce) {
         var ctrl = this;
 
         this.names = girlNames.map(function (e, i) {
             return {
-                index: i + 1,
+                index: getArabicNumbers(i + 1),
                 text: e
             };
         });
+
+        // http://stackoverflow.com/questions/5635939
+        function getArabicNumbers(str)
+        {
+            var map =
+                [
+                    "&\#1632;","&\#1633;","&\#1634;","&\#1635;","&\#1636;",
+                    "&\#1637;","&\#1638;","&\#1639;","&\#1640;","&\#1641;"
+                ];
+            var newStr = "";
+            str = String(str);
+
+            for(var i = 0; i < str.length; i++) {
+                newStr += map[parseInt(str.charAt(i))];
+            }
+
+            return $sce.trustAsHtml(newStr);
+        }
     }
     </script>
     <style>
@@ -66,9 +84,9 @@
         <div class="row">
             <div class="col-xs-12">
                 <table id="names" class="table table-bordered">
-                    <tr><td colspan="2">{{filtered.length}} \ {{ctrl.names.length}}
+                    <!--<tr><td colspan="2">{{filtered.length}} \ {{ctrl.names.length}}</td></tr>-->
                     <tr ng-repeat="item in ctrl.names | startsWith:ctrl.namePart as filtered">
-                        <td>{{item.index}}</td>
+                        <td ng-bind-html="item.index"></td>
                         <td>{{item.text}}</td>
                     </tr>
                 </table>
